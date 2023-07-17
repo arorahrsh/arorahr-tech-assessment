@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import Form from 'react-bootstrap/Form';
+import InputGroup from 'react-bootstrap/InputGroup';
 
 /* Given an input password string, this function validates the following conditions:
     - either the passowrd is more than 15 characters without any special restrictions, or
@@ -11,6 +13,7 @@ import React, { useState } from "react";
 export function validatePassword (password: string): string {
   // regex pattern to check for atleast 2 special characters and 1 digit
   const regex = /^(?=.*[!@#$%^&*()\-_=+'/.\\,].*[!@#$%^&*()\-_=+'/.\\,])(?=.*\d).*$/
+
   if (password.length < 8) {
     return "Password must be atleast 8 characters"
   }
@@ -22,7 +25,11 @@ export function validatePassword (password: string): string {
   return ""
 }
 
-function PasswordField() {
+/* This component encapuslates a password input field allowing the user to enter their
+   password. This component stores the user password and validates the input based on
+   the rules outlined above.
+*/
+function PasswordField (props) {
   const [passwordValue, setPasswordValue] = useState("")
   const [errorMessage, setErrorMessage] = useState("")
 
@@ -31,17 +38,26 @@ function PasswordField() {
     setPasswordValue(newPassword)
     const errorMessage = validatePassword(newPassword)
     setErrorMessage(errorMessage)
-    console.log(newPassword)
+
+    // pass state back to parent using callback
+    props.onSubmit(newPassword, errorMessage == "")
   }
 
   return (
-    <div>
-      <label>
-        Password
-        <input type="password" name="password" onChange={onInputChange} />
-      </label>
-      <label className="errors">{errorMessage}</label>
-    </div>
+    <Form.Group>
+      <Form.Label>Password</Form.Label>
+      <InputGroup hasValidation>
+        <Form.Control
+          required
+          type="password"
+          placeholder="Password"
+          value={passwordValue}
+          isInvalid={errorMessage != ""}
+          onChange={onInputChange}
+        />
+        <Form.Control.Feedback type="invalid">{errorMessage}</Form.Control.Feedback>
+      </InputGroup>
+    </Form.Group>
   );
 }
 
