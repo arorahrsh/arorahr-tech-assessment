@@ -26,7 +26,9 @@ function App() {
         <Row className="row-md-auto">
           <Form noValidate validated={isValid}>
             <PasswordField onSubmit={getFormData} />
-            <Button type="submit">Save password</Button>
+            <Button type="submit" className="w-100 mt-2" disabled={!isValid}>
+              Save password
+            </Button>
           </Form>
         </Row>
       </Container>
