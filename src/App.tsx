@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import westpacLogo from './assets/westpac.svg'
 import './App.css'
+import Button from 'react-bootstrap/Button'
 import Container from 'react-bootstrap/Container'
 import Form from 'react-bootstrap/Form'
 import Row from 'react-bootstrap/Row'
@@ -11,7 +12,6 @@ function App() {
   const [password, setPassword] = useState("")
 
   const getFormData = (password: string, isValid: boolean) => {
-    console.log(password + "from child")
     setPassword(password)
     setIsValid(isValid)
   }
@@ -25,9 +25,8 @@ function App() {
         </Row>
         <Row className="row-md-auto">
           <Form noValidate validated={isValid}>
-            <PasswordField
-              onSubmit={getFormData}
-            />
+            <PasswordField onSubmit={getFormData} />
+            <Button type="submit">Save password</Button>
           </Form>
         </Row>
       </Container>
