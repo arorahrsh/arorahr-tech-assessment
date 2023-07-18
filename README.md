@@ -33,7 +33,18 @@ npm run dev
 
 ### Running the units
 
-4. Follow steps 1-2 above and then run the following command to execute the unit tests. Refer to the command line output for results.
+4. Follow steps 1-2 above and then run the following command. Refer to the command line output for results.
 
 ```
+npm run test
 ```
+
+## Design considerations
+
+- The application consists of two main components. The `App` component represents a single page application for the password reset functionality and allows submitting the password. However, the actual entering of the input and password validation is encapsulated in the `PasswordField` component. This segregation allows for a better separation of concern and clear responsibilities of each of these components. Furthermore, developing the password input as a standalone component promotes reuse of this component in the future. For example, if this were a larger application, the password field component could easily be reused in multiple forms e.g. Login, Sign up and Reset Password.
+- React Bootstrap was used to style this application to prevent having to reinvent the wheel by adding boilerplate CSS code to this application.
+- While the `PasswordField` component stores the password and validation logic, this is continuously passed back to the `App` parent component through the use of a callback prop. This allows the parent to enable the "Save password" button when the entered password is confirmed as being valid. Designing the button this way gives the user visual feedback when the form is ready to be saved. In addition, this button logic could easily be extended in future to implement saving of this new password to a database.
+
+## Assumptions
+
+- While most real-world applications require a new password to be entered twice to confirm password matching, I have not included this functionality in this POC since this feature was not explicitly mentioned in the assessment requirements.
