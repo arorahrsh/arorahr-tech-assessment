@@ -44,8 +44,8 @@ function PasswordField (props) {
   }
 
   return (
-    <Form.Group>
-      <Form.Label>Password</Form.Label>
+    <Form.Group data-testid={'child'}>
+      <Form.Label htmlFor="passwordInput">Password</Form.Label>
       <InputGroup hasValidation>
         <Form.Control
           required
@@ -54,8 +54,9 @@ function PasswordField (props) {
           value={passwordValue}
           isInvalid={errorMessage != ""}
           onChange={onInputChange}
+          id="passwordInput"
         />
-        <Form.Control.Feedback type="invalid">{errorMessage}</Form.Control.Feedback>
+        <Form.Control.Feedback type="invalid" data-testid={'error'}>{errorMessage}</Form.Control.Feedback>
       </InputGroup>
     </Form.Group>
   );

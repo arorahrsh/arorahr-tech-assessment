@@ -24,8 +24,8 @@ function App() {
           <h3 className="text-center">Reset Password</h3>
         </Row>
         <Row className="row-md-auto">
-          <Form noValidate validated={isValid}>
-            <PasswordField onSubmit={getFormData} />
+          <Form noValidate validated={isValid} data-testid={'parent'} >
+            <PasswordField onSubmit={getFormData}/>
             <Button type="submit" className="w-100 mt-2" disabled={!isValid}>
               Save password
             </Button>
