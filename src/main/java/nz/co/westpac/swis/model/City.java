@@ -1,5 +1,8 @@
 package nz.co.westpac.swis.model;
 
+import lombok.Getter;
+
+@Getter
 public class City {
-    String name;
+    public String city;
 }
