@@ -1,0 +1,124 @@
+openapi: 3.0.0
+info:
+  title: Simple Weather Information Service
+  description: Provides current weather data for different cities in New Zealand.
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080/v1
+    description: Local development server
+
+paths:
+  /weather:
+    post:
+      summary: Get current weather data for the provided cities (up to 3 cities).
+      description: Retrieves the current weather for the specified cities from in-memory store. If not found, a mocked external weather service call is made.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  city:
+                    type: string
+                    example: "Auckland"
+              example:
+                - city: "Auckland"
+                - city: "Wellington"
+      responses:
+        '200':
+          description: Successfully retrieved weather information.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    city:
+                      type: string
+                      example: "Auckland"
+                    temp:
+                      type: integer
+                      example: 24
+                    unit:
+                      type: string
+                      example: "C"
+                    date:
+                      type: string
+                      example: "23/10/2023"
+                    weather:
+                      type: string
+                      enum:
+                        - cloudy
+                        - sunny
+                        - foggy
+                        - rain
+                      example: "cloudy"
+                example:
+                  - city: "Auckland"
+                    temp: 24
+                    unit: "C"
+                    date: "23/10/2023"
+                    weather: "cloudy"
+                  - city: "Wellington"
+                    temp: 14
+                    unit: "C"
+                    date: "23/10/2023"
+                    weather: "rain"
+        '400':
+          description: Bad request (can include multiple error messsages).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+              example:
+                errors:
+                  - message: "Invalid request body provided"
+                  - message: "Requested city 'Aukland' is invalid"
+                  - message: "Only a maximum of 3 cities allowed in one request."
+        '404':
+          description: City not found.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+              example:
+                errors:
+                  - message: "Requested city 'Whangarei' not found in the system."
+        '500':
+          description: Internal server error (e.g. external API failure).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+              example:
+                errors:
+                  - message: "Error occurred while fetching weather data."
