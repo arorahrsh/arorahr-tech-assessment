@@ -3,8 +3,6 @@ package nz.co.westpac.swis.service;
 import nz.co.westpac.swis.model.City;
 import nz.co.westpac.swis.model.Weather;
 import nz.co.westpac.swis.model.WeatherDescription;
-import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -14,6 +12,11 @@ import java.util.concurrent.ThreadLocalRandom;
 @Service
 public class MockedWeatherInfoService {
 
+    /**
+     * Returns a mock Weather data object for the given city with random weather information for today's date.
+     * @param city Requested city
+     * @return Weather information
+     */
     public Weather getWeatherData(City city) {
         return new Weather(
                 city.city,

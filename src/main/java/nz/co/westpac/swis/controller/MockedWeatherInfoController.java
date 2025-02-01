@@ -19,11 +19,11 @@ public class MockedWeatherInfoController {
     @Autowired
     private Logger logger;
 
-    @GetMapping("/weather-info")
-    public ResponseEntity<Weather> getMockedData(@RequestBody City city) {
-        logger.info("Sending GET request to mocked weather API: {}", GsonHelper.toJson(city));
-        Weather result = mockedWeatherInfoService.getWeatherData(city);
-        logger.info("Received weather data for city '{}' as a JSON response: {}", city.city, GsonHelper.toJson(result));
+    @GetMapping("/weather-info/{city}")
+    public ResponseEntity<Weather> getMockedData(@PathVariable String city) {
+        logger.info("Sending GET request to mocked weather API with query param: {}", city);
+        Weather result = mockedWeatherInfoService.getWeatherData(new City(city));
+        logger.info("Received weather data from external API as a JSON response: {}", GsonHelper.toJson(result));
         return ResponseEntity.ok(result);
     }
 }
