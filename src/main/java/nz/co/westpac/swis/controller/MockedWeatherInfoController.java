@@ -22,7 +22,7 @@ public class MockedWeatherInfoController {
     public ResponseEntity<Weather> getMockedData(@PathVariable String city) {
         logger.info("Received GET /mocked-service/weather-info/{}", city);
         Weather result = mockedWeatherInfoService.getWeatherData(city);
-        logger.info("Returning weather data from external API as a JSON response: {}", GsonHelper.toJson(result));
+        logger.info("Returning weather data from external API: {}", GsonHelper.toJson(result));
         return ResponseEntity.ok(result);
     }
 }
