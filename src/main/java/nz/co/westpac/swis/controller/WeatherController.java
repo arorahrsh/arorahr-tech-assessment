@@ -1,12 +1,12 @@
 package nz.co.westpac.swis.controller;
 
+import lombok.AllArgsConstructor;
 import nz.co.westpac.swis.controller.errorhandling.ErrorMessage;
 import nz.co.westpac.swis.controller.errorhandling.ErrorResponse;
 import nz.co.westpac.swis.model.City;
 import nz.co.westpac.swis.model.Weather;
 import nz.co.westpac.swis.service.WeatherService;
 import nz.co.westpac.swis.utils.GsonHelper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,14 +15,13 @@ import org.slf4j.Logger;
 import java.util.ArrayList;
 import java.util.List;
 
+@AllArgsConstructor
 @RestController
 @RequestMapping("/v1")
 public class WeatherController {
 
-    @Autowired
     private WeatherService weatherService;
 
-    @Autowired
     private Logger logger;
 
     @PostMapping("/weather")

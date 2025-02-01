@@ -1,21 +1,20 @@
 package nz.co.westpac.swis.controller;
 
+import lombok.AllArgsConstructor;
 import nz.co.westpac.swis.model.Weather;
 import nz.co.westpac.swis.service.MockedWeatherInfoService;
 import nz.co.westpac.swis.utils.GsonHelper;
 import org.slf4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@AllArgsConstructor
 @RestController
 @RequestMapping("/mocked-service")
 public class MockedWeatherInfoController {
 
-    @Autowired
     private MockedWeatherInfoService mockedWeatherInfoService;
 
-    @Autowired
     private Logger logger;
 
     @GetMapping("/weather-info/{city}")
