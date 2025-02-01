@@ -1,6 +1,5 @@
 package nz.co.westpac.swis.service;
 
-import nz.co.westpac.swis.model.City;
 import nz.co.westpac.swis.model.Weather;
 import nz.co.westpac.swis.model.WeatherDescription;
 import org.springframework.stereotype.Service;
@@ -17,9 +16,9 @@ public class MockedWeatherInfoService {
      * @param city Requested city
      * @return Weather information
      */
-    public Weather getWeatherData(City city) {
+    public Weather getWeatherData(String city) {
         return new Weather(
-                city.city,
+                city,
                 generateRandomTemp(),
                 "C",
                 getCurrentDate(),

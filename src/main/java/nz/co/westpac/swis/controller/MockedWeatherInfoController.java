@@ -1,6 +1,5 @@
 package nz.co.westpac.swis.controller;
 
-import nz.co.westpac.swis.model.City;
 import nz.co.westpac.swis.model.Weather;
 import nz.co.westpac.swis.service.MockedWeatherInfoService;
 import nz.co.westpac.swis.utils.GsonHelper;
@@ -21,9 +20,9 @@ public class MockedWeatherInfoController {
 
     @GetMapping("/weather-info/{city}")
     public ResponseEntity<Weather> getMockedData(@PathVariable String city) {
-        logger.info("Sending GET request to mocked weather API with query param: {}", city);
-        Weather result = mockedWeatherInfoService.getWeatherData(new City(city));
-        logger.info("Received weather data from external API as a JSON response: {}", GsonHelper.toJson(result));
+        logger.info("Received GET /mocked-service/weather-info/{}", city);
+        Weather result = mockedWeatherInfoService.getWeatherData(city);
+        logger.info("Returning weather data from external API as a JSON response: {}", GsonHelper.toJson(result));
         return ResponseEntity.ok(result);
     }
 }
