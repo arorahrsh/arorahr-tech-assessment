@@ -26,7 +26,7 @@ cd arorahr-tech-assessment
 ./gradlew build
 ```
 
-3. Once the project dependencies are installed, run the application using the command below which will deploy the app on `http://localhost:8080/`
+3. Run the application using the command below which will deploy the app on `http://localhost:8080/`
 
 ```
 ./gradlew bootRun
@@ -37,3 +37,23 @@ cd arorahr-tech-assessment
 ```
 curl -H 'Content-Type: application/json' -d '[{"city":"Auckland"},{"city":"Wellington"}]' -X POST http://localhost:8080/v1/weather
 ```
+
+## High level architecture
+
+TODO
+
+![design](./images/02-design.png)
+
+## API Specification
+
+The project contains an Open API specification for this service which was drafted prior to development. This can be viewed on the [Swagger editor](https://editor.swagger.io/). Alternatively, a screenshot of this specification is shown below. For the raw specification, please refer to the [api-spec.yaml](./api-spec.yaml) file in the root directory.
+
+![spec](./images/01-api-specification.png)
+
+## Design considerations
+
+TODO
+
+## Assumptions
+
+TODO
