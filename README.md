@@ -26,8 +26,14 @@ cd arorahr-tech-assessment
 ./gradlew build
 ```
 
-3. Once the project dependencies are installed, run the application using the command below which will launch the app on this URL: `http://localhost:8080/`
+3. Once the project dependencies are installed, run the application using the command below which will deploy the app on `http://localhost:8080/`
 
 ```
 ./gradlew bootRun
+```
+
+4. Use CURL or a REST Client (e.g. Postman) to call this weather service API
+
+```
+curl -H 'Content-Type: application/json' -d '[{"city":"Auckland"},{"city":"Wellington"}]' -X POST http://localhost:8080/v1/weather
 ```

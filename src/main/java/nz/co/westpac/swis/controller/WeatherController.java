@@ -12,7 +12,7 @@ import org.slf4j.Logger;
 import java.util.List;
 
 @RestController
-@RequestMapping("/weather")
+@RequestMapping("/v1")
 public class WeatherController {
 
     @Autowired
@@ -21,10 +21,11 @@ public class WeatherController {
     @Autowired
     private Logger logger;
 
-
-    @PostMapping
+    @PostMapping("/weather")
     public ResponseEntity<List<Weather>> getWeather(@RequestBody List<City> cities) {
-        logger.info("Received POST request with JSON payload: {}", GsonHelper.toJson(cities));
-        return ResponseEntity.ok(weatherService.getWeatherData(cities));
+        logger.info("Received POST /v1/weather request with JSON payload: {}", GsonHelper.toJson(cities));
+        List<Weather> result = weatherService.getWeatherData(cities);
+        logger.info("Returning 200 HTTP status code and JSON payload: {}", GsonHelper.toJson(result));
+        return ResponseEntity.ok(result);
     }
 }

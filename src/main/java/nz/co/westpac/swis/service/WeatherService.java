@@ -15,7 +15,12 @@ public class WeatherService {
     @Autowired
     private WeatherRepository weatherRepository;
 
+    @Autowired
+    private MockedWeatherInfoService mockedWeatherInfoService;
+
     public List<Weather> getWeatherData(List<City> cities) {
-        return cities.stream().map(c -> new Weather(c.city, 23, "C", "date", "cloudy")).collect(Collectors.toList());
+        return cities.stream()
+                .map(city -> mockedWeatherInfoService.getWeatherData(city))
+                .collect(Collectors.toList());
     }
 }
