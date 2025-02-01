@@ -21,8 +21,13 @@ public class MockedWeatherInfoController {
     @GetMapping("/weather-info/{city}")
     public ResponseEntity<Weather> getMockedData(@PathVariable String city) {
         logger.info("Received GET /mocked-service/weather-info/{}", city);
+
+        // note: assuming city provided will always be valid
+        // hence no extra validation is added here
         Weather result = mockedWeatherInfoService.getWeatherData(city);
+
         logger.info("Returning weather data from external API: {}", GsonHelper.toJson(result));
+
         return ResponseEntity.ok(result);
     }
 }

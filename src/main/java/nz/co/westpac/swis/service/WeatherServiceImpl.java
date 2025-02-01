@@ -4,6 +4,7 @@ import nz.co.westpac.swis.config.properties.AppProperties;
 import nz.co.westpac.swis.model.City;
 import nz.co.westpac.swis.model.Weather;
 import nz.co.westpac.swis.repository.WeatherRepository;
+import nz.co.westpac.swis.utils.GsonHelper;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,7 +38,7 @@ public class WeatherServiceImpl implements WeatherService {
         // returns weather information if found in cache, otherwise fetches from external API
         Optional<Weather> weather = this.weatherRepository.findById(city);
         if (weather.isPresent()) {
-            logger.info("Searching if cached weather data exists for city '{}'", city);
+            logger.info("Found cached weather data for city '{}': {}", city, GsonHelper.toJson(weather.get()));
             return weather.get();
         } else {
             logger.info("Cached weather data not found in database for city '{}'", city);
