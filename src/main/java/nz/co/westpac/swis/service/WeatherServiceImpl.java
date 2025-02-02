@@ -22,6 +22,8 @@ public class WeatherServiceImpl implements WeatherService {
 
     private AppProperties appProperties;
 
+    private RestClient restClient;
+
     private Logger logger;
 
     public List<Weather> getWeatherData(List<City> cities) {
@@ -46,7 +48,7 @@ public class WeatherServiceImpl implements WeatherService {
 
     private Weather getFromExternalApi(String city) {
         logger.info("Requesting weather data from external mock service for city '{}'", city);
-        return RestClient.create()
+        return restClient
                 .get()
                 .uri(appProperties.getMockedWeatherEndpoint() + "/" + city)
                 .retrieve()
