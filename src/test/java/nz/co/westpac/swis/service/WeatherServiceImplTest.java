@@ -1,13 +1,13 @@
 package nz.co.westpac.swis.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
 import nz.co.westpac.swis.config.properties.AppProperties;
 import nz.co.westpac.swis.model.City;
 import nz.co.westpac.swis.model.Weather;
 import nz.co.westpac.swis.repository.WeatherRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -43,27 +43,22 @@ class WeatherServiceImplTest {
     @InjectMocks
     private WeatherServiceImpl underTest;
 
-    private Weather mockWeather;
-    private City mockCity;
-
-    @BeforeEach
-    void setUp() {
-        mockCity = new City("Auckland");
-        mockWeather = new Weather("Auckland", 25, "C", CURRENT_DATE, "sunny");
-    }
-
     @Test
     void whenWeatherDataExistsInDB_thenReturnCachedData() {
+        List<City> mockCities = List.of(new City("Auckland"));
+        Weather mockWeather = new Weather("Auckland", 25, "C", CURRENT_DATE, "sunny");
+
         when(weatherRepository.findById("Auckland")).thenReturn(Optional.of(mockWeather));
 
-        Weather result = underTest.getWeatherData(List.of(mockCity)).get(0);
+        List<Weather> result = underTest.getWeatherData(mockCities);
 
         assertNotNull(result);
-        assertEquals("Auckland", result.getCity());
-        assertEquals(25, result.getTemp());
-        assertEquals("C", result.getUnit());
-        assertEquals(CURRENT_DATE, result.getDate());
-        assertEquals("sunny", result.getWeather());
+        assertEquals(1, result.size());
+        assertEquals("Auckland", result.get(0).getCity());
+        assertEquals(25, result.get(0).getTemp());
+        assertEquals("C", result.get(0).getUnit());
+        assertEquals(CURRENT_DATE, result.get(0).getDate());
+        assertEquals("sunny", result.get(0).getWeather());
 
         verify(logger).info("Searching if cached weather data exists for city '{}'", "Auckland");
         verify(logger).info("Found cached weather data for city '{}': {}", "Auckland",
@@ -73,6 +68,9 @@ class WeatherServiceImplTest {
 
     @Test
     void whenWeatherDataNotInDB_thenFetchFromExternalApiAndSave() {
+        List<City> mockCities = List.of(new City("Auckland"));
+        Weather mockWeather = new Weather("Auckland", 25, "C", CURRENT_DATE, "sunny");
+
         when(appProperties.getMockedWeatherEndpoint()).thenReturn(MOCK_EXTERNAL_API_URI);
         when(weatherRepository.findById("Auckland")).thenReturn(Optional.empty());
         when(weatherRepository.save(any(Weather.class))).thenReturn(mockWeather);
@@ -86,18 +84,41 @@ class WeatherServiceImplTest {
         when(headersSpecMock.retrieve()).thenReturn(responseSpecMock);
         when(responseSpecMock.toEntity(Weather.class)).thenReturn(ResponseEntity.ok(mockWeather));;
 
-        Weather result = underTest.getWeatherData(List.of(mockCity)).get(0);
+        List<Weather> result = underTest.getWeatherData(mockCities);
 
         assertNotNull(result);
-        assertEquals("Auckland", result.getCity());
-        assertEquals(25, result.getTemp());
-        assertEquals("C", result.getUnit());
-        assertEquals(CURRENT_DATE, result.getDate());
-        assertEquals("sunny", result.getWeather());
+        assertEquals(1, result.size());
+        assertEquals("Auckland", result.get(0).getCity());
+        assertEquals(25, result.get(0).getTemp());
+        assertEquals("C", result.get(0).getUnit());
+        assertEquals(CURRENT_DATE, result.get(0).getDate());
+        assertEquals("sunny", result.get(0).getWeather());
 
         verify(logger).info("Searching if cached weather data exists for city '{}'", "Auckland");
         verify(logger).info("Cached weather data not found in database for city '{}'", "Auckland");
         verify(logger).info("Requesting weather data from external mock service for city '{}'", "Auckland");
         verify(weatherRepository).save(mockWeather);
+    }
+
+    @Test
+    void whenDuplicateCitiesProvided_OnlyOneWeatherResponseReturned() {
+        List<City> mockCities = List.of(new City("Auckland"), new City("Auckland"));
+        Weather mockWeather = new Weather("Auckland", 25, "C", CURRENT_DATE, "sunny");
+        when(weatherRepository.findById("Auckland")).thenReturn(Optional.of(mockWeather));
+
+        List<Weather> result = underTest.getWeatherData(mockCities);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals("Auckland", result.get(0).getCity());
+        assertEquals(25, result.get(0).getTemp());
+        assertEquals("C", result.get(0).getUnit());
+        assertEquals(CURRENT_DATE, result.get(0).getDate());
+        assertEquals("sunny", result.get(0).getWeather());
+
+        verify(logger).info("Searching if cached weather data exists for city '{}'", "Auckland");
+        verify(logger).info("Found cached weather data for city '{}': {}", "Auckland",
+                "{\"city\":\"Auckland\",\"temp\":25,\"unit\":\"C\",\"date\":\"" + CURRENT_DATE + "\",\"weather\":\"sunny\"}");
+        verifyNoMoreInteractions(weatherRepository);
     }
 }

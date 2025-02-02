@@ -28,6 +28,7 @@ public class WeatherServiceImpl implements WeatherService {
 
     public List<Weather> getWeatherData(List<City> cities) {
         return cities.stream()
+                .distinct()
                 .map(city -> this.getFromDB(city.getCity()))
                 .collect(Collectors.toList());
     }
