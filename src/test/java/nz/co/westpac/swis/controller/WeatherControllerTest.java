@@ -65,7 +65,43 @@ class WeatherControllerTest {
     }
 
     @Test
-    void whenInvalidCitiesProvided_thenReturnBadRequest() throws Exception {
+    void whenDuplicateCitiesProvided_thenReturnWeatherDataWithoutDuplicates() throws Exception {
+        List<City> cities = List.of(new City("Auckland"), new City("Wellington"), new City("Auckland"));
+        List<Weather> weatherList = List.of(
+                new Weather("Auckland", 25, "C", CURRENT_DATE, "sunny"),
+                new Weather("Wellington", 12, "C", CURRENT_DATE, "cloudy"));
+
+        when(weatherService.getWeatherData(cities)).thenReturn(weatherList);
+
+        mockMvc.perform(post("/v1/weather")
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(cities)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].city").value("Auckland"))
+                .andExpect(jsonPath("$[0].temp").value(25))
+                .andExpect(jsonPath("$[0].unit").value("C"))
+                .andExpect(jsonPath("$[0].date").value(CURRENT_DATE))
+                .andExpect(jsonPath("$[0].weather").value("sunny"))
+                .andExpect(jsonPath("$[1].city").value("Wellington"))
+                .andExpect(jsonPath("$[1].temp").value(12))
+                .andExpect(jsonPath("$[1].unit").value("C"))
+                .andExpect(jsonPath("$[1].date").value(CURRENT_DATE))
+                .andExpect(jsonPath("$[1].weather").value("cloudy"));
+    }
+
+    @Test
+    void whenMoreThanThreeCitiesProvided_thenReturnBadRequest() throws Exception {
+        List<City> cities = List.of(new City("Auckland"), new City("Wellington"), new City("Dunedin"), new City("Christchurch"));
+
+        mockMvc.perform(post("/v1/weather")
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(cities)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors[0].message").value("Only a maximum of 3 cities allowed in one request."));
+    }
+
+    @Test
+    void whenInvalidCityNameProvided_thenReturnBadRequest() throws Exception {
         List<City> cities = List.of(new City("A"));
 
         mockMvc.perform(post("/v1/weather")
@@ -73,5 +109,27 @@ class WeatherControllerTest {
                         .content(objectMapper.writeValueAsString(cities)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errors[0].message").value("Requested city name 'A' is invalid."));
+    }
+
+    @Test
+    void whenCityWithNullNameProvided_thenReturnBadRequest() throws Exception {
+        List<City> cities = List.of(new City(null));
+
+        mockMvc.perform(post("/v1/weather")
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(cities)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors[0].message").value("Invalid request body provided."));
+    }
+
+    @Test
+    void whenEmptyCitesProvided_thenReturnBadRequest() throws Exception {
+        List<City> cities = List.of();
+
+        mockMvc.perform(post("/v1/weather")
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(cities)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors[0].message").value("Invalid request body provided."));
     }
 }
