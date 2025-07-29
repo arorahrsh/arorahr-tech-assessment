@@ -1,0 +1,351 @@
+openapi: 3.0.0
+info:
+  title: ACME Air Flights Service
+  description: Provides flight information for ACME Air and allows users to create/manage flight bookings.
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080/v1
+    description: Local development server
+
+paths:
+  /flights:
+    post:
+      summary: Get flights for the requested travel parameters
+      description: Retrieves available flights based on the provided origin city, destination city, and travel date.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                origin:
+                  type: string
+                  description: Origin city airport code
+                  enum: ["AKL", "WLG", "CHC", "DUD", "ZQN", "HLZ", "NSN", "NPE", "TRG", "IVC", "NPL", "PMR"]
+                  example: "AKL"
+                destination:
+                  type: string
+                  description: Destination city airport code
+                  enum: ["AKL", "WLG", "CHC", "DUD", "ZQN", "HLZ", "NSN", "NPE", "TRG", "IVC", "NPL", "PMR"]
+                  example: "WLG"
+                date:
+                  type: string
+                  format: date
+                  description: Travel date in DD/MM/YYYY format
+                  example: "25/07/2025"
+            example:
+              origin: "AKL"
+              destination: "WLG"
+              date: "25/07/2025"
+      responses:
+        '200':
+          description: Successfully retrieved list of flights. Note, the list can be empty if no flights match the criteria.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    flightId:
+                      type: string
+                      format: uuid
+                      example: "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+                    flightCode:
+                      type: string
+                      example: "ACME217"
+                    origin:
+                      type: string
+                      example: "AKL"
+                    destination:
+                      type: string
+                      example: "WLG"
+                    departureTime:
+                      type: string
+                      format: date-time
+                      example: "2025-08-15T08:30:00Z"
+                    arrivalTime:
+                      type: string
+                      format: date-time
+                      example: "2025-08-15T09:35:00Z"
+                    price:
+                      type: number
+                      format: double
+                      example: 89.99
+                example:
+                  - flightId: "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+                    flightCode: "ACME217"
+                    origin: "AKL"
+                    destination: "WLG"
+                    departureTime: "2026-07-25T08:30:00Z"
+                    arrivalTime: "2026-07-25T09:35:00Z"
+                    price: 89.99
+                  - flightId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                    flightCode: "ACME168"
+                    origin: "AKL"
+                    destination: "WLG"
+                    departureTime: "2026-07-25T14:00:00Z"
+                    arrivalTime: "2026-07-25T15:05:00Z"
+                    price: 120.00
+        '400':
+          description: Bad request (can include multiple error messsages).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+              example:
+                errors:
+                  - message: "Request body is invalid or missing."
+                  - message: "Origin city code is invalid or missing."
+                  - message: "Destination city code is invalid or missing."
+                  - message: "Travel date is invalid or missing."
+        '422':
+          description: Semantically valid request but fails business rules.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+              example:
+                errors:
+                  - message: "Origin and destination city cannot be the same."
+                  - message: "Travel date cannot be in the past."
+                  - message: "Travel date must be provided in DD/MM/YYYY format."
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+              example:
+                errors:
+                  - message: "Internal server error."
+  /bookings:
+    post:
+      summary: Create a flight booking
+      description: Create a new booking for the given flight ID and passenger details.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                flightId:
+                  type: string
+                  format: uuid
+                  description: Flight ID to be booked
+                  example: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                passengerName:
+                  type: string
+                  description: Passenger's full name
+                  example: "Martin Zhu"
+                passengerEmail:
+                  type: string
+                  format: email
+                  description: Passenger's email address
+                  example: "martin.zhu@example.com"
+              example:
+                flightId: "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                passengerName: "Martin Zhu"
+                passengerEmail: "martin.zhu@example.com"
+      responses:
+        '201':
+          description: Successfully created booking.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    bookingId:
+                      type: string
+                      format: uuid
+                      description: Newly created Booking ID
+                      example: "9f5e6174-1393-4e3e-914e-2931a7e5b4da"
+                    status:
+                      type: string
+                      example: "CONFIRMED"
+                example:
+                  bookingId: "9f5e6174-1393-4e3e-914e-2931a7e5b4da"
+                  status: "CONFIRMED"
+        '400':
+          description: Bad request (can include multiple error messsages).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+              example:
+                errors:
+                  - message: "Request body is invalid or missing."
+                  - message: "Passenger name is invalid or missing."
+                  - message: "Passenger email address is invalid or missing."
+        '404':
+          description: Flight ID not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+              example:
+                errors:
+                  - message: "Flight ID not found."
+        '422':
+          description: Semantically valid request but fails business rules.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+              example:
+                errors:
+                  - message: "Booking already exists for this passenger."
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+              example:
+                errors:
+                  - message: "Internal server error."
+  /bookings/{bookingId}:
+    delete:
+      summary: Cancel flight booking
+      description: Delete an existing flight booking in the database.
+      parameters:
+        - name: bookingId
+          in: path
+          required: true
+          description: ID of the booking to delete
+          schema:
+            type: string
+            format: uuid
+            example: "9f5e6174-1393-4e3e-914e-2931a7e5b4da"
+      responses:
+        '204':
+          description: Successfully cancelled booking.
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+              example:
+                errors:
+                  - message: "Booking ID is invalid or missing."
+        '404':
+          description: Booking ID not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+              example:
+                errors:
+                  - message: "Booking ID not found."
+        '422':
+          description: Semantically valid request but fails business rules.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+              example:
+                errors:
+                  - message: "Booking cannot be cancelled as flight has already departed."
+        '500':
+          description: Internal server error.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        message:
+                          type: string
+              example:
+                errors:
+                  - message: "Internal server error."
