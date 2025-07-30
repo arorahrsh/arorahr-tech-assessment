@@ -10,5 +10,5 @@ import java.util.UUID;
 
 @Repository
 public interface FlightsRepository extends JpaRepository<Flight, UUID> {
-    public List<Flight> findByOriginAndDestination(AirportCode origin, AirportCode destination);
+    List<Flight> findByOriginAndDestination(AirportCode origin, AirportCode destination);
 }

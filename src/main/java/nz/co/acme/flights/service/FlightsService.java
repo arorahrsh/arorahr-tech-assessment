@@ -6,7 +6,9 @@ import nz.co.acme.flights.repository.FlightsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class FlightsService {
@@ -14,7 +16,10 @@ public class FlightsService {
     @Autowired
     private FlightsRepository flightsRepository;
 
-    public List<Flight> getFlights(AirportCode origin, AirportCode destination, String travelDate) {
-        return flightsRepository.findByOriginAndDestination(origin, destination);
+    public List<Flight> getFlights(AirportCode origin, AirportCode destination, LocalDate travelDate) {
+        List<Flight> flights = flightsRepository.findByOriginAndDestination(origin, destination);
+        return flights.stream()
+                .filter(flight -> flight.getDepartureTime().toLocalDate().equals(travelDate))
+                .collect(Collectors.toList());
     }
 }

@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 @Data
@@ -24,9 +25,9 @@ public class Flight {
     @Enumerated(EnumType.STRING)
     private AirportCode destination;
 
-    private String departureTime;
+    private ZonedDateTime departureTime;
 
-    private String arrivalTime;
+    private ZonedDateTime arrivalTime;
 
     private Double price;
 }
