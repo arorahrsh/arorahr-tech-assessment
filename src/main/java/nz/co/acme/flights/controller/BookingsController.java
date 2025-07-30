@@ -10,10 +10,9 @@ import nz.co.acme.flights.service.BookingsService;
 import org.slf4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @AllArgsConstructor
 @RestController
@@ -37,5 +36,14 @@ public class BookingsController {
 
         logger.info("Returning 201 HTTP status code and JSON response payload: {}", gson.toJson(result));
         return new ResponseEntity<>(result, HttpStatus.CREATED);
+    }
+    @DeleteMapping("/{bookingId}")
+    public ResponseEntity<Void> deleteBooking(@PathVariable UUID bookingId) {
+        logger.info("Received DELETE /v1/bookings/{}", bookingId);
+
+        bookingsService.deleteBooking(bookingId);
+
+        logger.info("Deleted booking with ID {}", bookingId);
+        return ResponseEntity.noContent().build();
     }
 }

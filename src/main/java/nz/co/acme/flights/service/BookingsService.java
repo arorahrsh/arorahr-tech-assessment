@@ -33,4 +33,12 @@ public class BookingsService {
 
         return bookingsRepository.save(booking);
     }
+
+    public void deleteBooking(UUID bookingId) {
+        boolean exists = bookingsRepository.existsById(bookingId);
+        if (!exists) {
+            throw new RuntimeException("Booking ID not found: " + bookingId);
+        }
+        bookingsRepository.deleteById(bookingId);
+    }
 }

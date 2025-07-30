@@ -32,7 +32,7 @@ class BookingsServiceTest {
     }
 
     @Test
-    void whenFlightIdValid_thenBookingIsCreated() {
+    void createBooking_whenFlightIdValid_thenBookingIsCreated() {
         // arrange
         UUID flightId = UUID.randomUUID();
         Passenger passenger = new Passenger("Test passenger", "passenger@test.com");
@@ -55,7 +55,7 @@ class BookingsServiceTest {
     }
 
     @Test
-    void whenFlightIdNotFound_thenThrowException() {
+    void createBooking_whenFlightIdNotFound_thenThrowException() {
         // arrange
         UUID flightId = UUID.randomUUID();
         Passenger passenger = new Passenger("Test passenger", "passenger@test.com");
@@ -68,5 +68,32 @@ class BookingsServiceTest {
 
         assertEquals("Flight ID not found", exception.getMessage());
         verify(bookingsRepository, never()).save(any());
+    }
+
+    @Test
+    void deleteBooking_whenBookingExists_thenDeleteSuccessfully() {
+        // arrange
+        UUID bookingId = UUID.randomUUID();
+        when(bookingsRepository.existsById(bookingId)).thenReturn(true);
+
+        // act
+        bookingsService.deleteBooking(bookingId);
+
+        // assert
+        verify(bookingsRepository).deleteById(bookingId);
+    }
+
+    @Test
+    void deleteBooking_whenBookingDoesNotExist_thenThrowException() {
+        // arrange
+        UUID bookingId = UUID.randomUUID();
+        when(bookingsRepository.existsById(bookingId)).thenReturn(false);
+
+        // act & assert
+        RuntimeException exception = assertThrows(RuntimeException.class,
+                () -> bookingsService.deleteBooking(bookingId));
+
+        assertEquals("Booking ID not found: " + bookingId, exception.getMessage());
+        verify(bookingsRepository, never()).deleteById(any());
     }
 }
