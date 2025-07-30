@@ -1,8 +1,8 @@
 CREATE TABLE FLIGHTS (
     flight_id UUID PRIMARY KEY,
     flight_code VARCHAR(10) NOT NULL,
-    origin VARCHAR(3) NOT NULL CHECK (origin IN ('AKL', 'WLG', 'CHC', 'DUD', 'ZQN', 'HLZ', 'NSN', 'NPE', 'TRG', 'IVC', 'NPL', 'PMR')),
-    destination VARCHAR(3) NOT NULL CHECK (destination IN ('AKL', 'WLG', 'CHC', 'DUD', 'ZQN', 'HLZ', 'NSN', 'NPE', 'TRG', 'IVC', 'NPL', 'PMR')),
+    origin VARCHAR(3) NOT NULL,
+    destination VARCHAR(3) NOT NULL,
     departure_time TIMESTAMP WITH TIME ZONE NOT NULL,
     arrival_time TIMESTAMP WITH TIME ZONE NOT NULL,
     price DECIMAL(5, 2) NOT NULL
