@@ -9,9 +9,9 @@ import java.time.ZonedDateTime;
 import java.util.UUID;
 
 @Data
-@Entity
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
 @Table(name = "flights")
 public class Flight {
     @Id

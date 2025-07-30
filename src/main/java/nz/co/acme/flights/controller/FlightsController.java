@@ -18,11 +18,11 @@ import java.util.List;
 @RequestMapping("/v1/flights")
 public class FlightsController {
 
-    private FlightsService flightsService;
+    private final FlightsService flightsService;
 
-    private Logger logger;
+    private final Logger logger;
 
-    private Gson gson;
+    private final Gson gson;
 
     @PostMapping
     public ResponseEntity<List<Flight>> getFlights(@RequestBody FlightSearchRequest request) {

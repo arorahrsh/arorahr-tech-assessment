@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 @Service
 public class FlightsService {
 
-    private FlightsRepository flightsRepository;
+    private final FlightsRepository flightsRepository;
 
     public List<Flight> getFlights(AirportCode origin, AirportCode destination, LocalDate travelDate) {
         List<Flight> flights = flightsRepository.findByOriginAndDestination(origin, destination);
