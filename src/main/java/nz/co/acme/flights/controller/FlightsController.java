@@ -1,10 +1,10 @@
 package nz.co.acme.flights.controller;
 
 import com.google.gson.Gson;
+import lombok.AllArgsConstructor;
 import nz.co.acme.flights.model.Flight;
 import nz.co.acme.flights.model.FlightSearchRequest;
 import nz.co.acme.flights.service.FlightsService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
@@ -13,17 +13,15 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+@AllArgsConstructor
 @RestController
 @RequestMapping("/v1/flights")
 public class FlightsController {
 
-    @Autowired
     private FlightsService flightsService;
 
-    @Autowired
     private Logger logger;
 
-    @Autowired
     private Gson gson;
 
     @PostMapping
