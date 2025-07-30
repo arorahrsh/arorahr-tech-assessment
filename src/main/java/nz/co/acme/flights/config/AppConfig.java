@@ -16,15 +16,15 @@ public class AppConfig {
 
     @Bean
     @Scope("singleton")
-    public Logger createLogger(InjectionPoint injectionPoint) {
+    public Logger logger(InjectionPoint injectionPoint) {
         Class<?> classOnWired = injectionPoint.getMember().getDeclaringClass();
         return LoggerFactory.getLogger(classOnWired);
     }
 
     @Bean
     @Scope("prototype")
-    public Gson createGson() {
-        var gsonBuilder = new GsonBuilder();
+    public Gson gson() {
+        GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.registerTypeAdapter(ZonedDateTime.class, new ZonedDateTimeAdapter());
         return gsonBuilder.create();
     }

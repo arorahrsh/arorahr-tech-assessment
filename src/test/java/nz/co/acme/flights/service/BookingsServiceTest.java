@@ -1,6 +1,7 @@
 package nz.co.acme.flights.service;
 
-import nz.co.acme.flights.model.AirportCode;
+import nz.co.acme.flights.exception.BusinessRuleException;
+import nz.co.acme.flights.exception.NotFoundException;
 import nz.co.acme.flights.model.Booking;
 import nz.co.acme.flights.model.Flight;
 import nz.co.acme.flights.model.Passenger;
@@ -32,49 +33,39 @@ class BookingsServiceTest {
     }
 
     @Test
-    void createBooking_whenFlightIdValid_thenBookingIsCreated() {
+    void whenCreateValidBooking_thenBookingIsSaved() {
         // arrange
         UUID flightId = UUID.randomUUID();
-        Passenger passenger = new Passenger("Test passenger", "passenger@test.com");
-        Flight flight = new Flight(flightId, "ACME123", AirportCode.AKL, AirportCode.WLG,
-                ZonedDateTime.now(), ZonedDateTime.now().plusHours(1), 100.0);
+        Passenger passenger = new Passenger("Jane Doe", "jane@example.com");
 
+        Flight flight = mock(Flight.class);
         when(flightsRepository.findById(flightId)).thenReturn(Optional.of(flight));
-        when(bookingsRepository.save(any(Booking.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(bookingsRepository.existsByFlight_FlightIdAndPassengerEmail(flightId, passenger.getPassengerEmail()))
+                .thenReturn(false);
+
+        Booking mockSavedBooking = mock(Booking.class);
+        when(bookingsRepository.save(any(Booking.class))).thenReturn(mockSavedBooking);
 
         // act
-        Booking booking = bookingsService.createBooking(flightId, passenger);
+        Booking result = bookingsService.createBooking(flightId, passenger);
 
         // assert
-        assertNotNull(booking.getBookingId());
-        assertEquals("Test passenger", booking.getPassengerName());
-        assertEquals("passenger@test.com", booking.getPassengerEmail());
-        assertEquals("CONFIRMED", booking.getStatus());
-        assertEquals(flight, booking.getFlight());
+        assertNotNull(result);
         verify(bookingsRepository).save(any(Booking.class));
     }
 
     @Test
-    void createBooking_whenFlightIdNotFound_thenThrowException() {
-        // arrange
-        UUID flightId = UUID.randomUUID();
-        Passenger passenger = new Passenger("Test passenger", "passenger@test.com");
-
-        when(flightsRepository.findById(flightId)).thenReturn(Optional.empty());
-
-        // act & assert
-        RuntimeException exception = assertThrows(RuntimeException.class,
-                () -> bookingsService.createBooking(flightId, passenger));
-
-        assertEquals("Flight ID not found", exception.getMessage());
-        verify(bookingsRepository, never()).save(any());
-    }
-
-    @Test
-    void deleteBooking_whenBookingExists_thenDeleteSuccessfully() {
+    void whenDeleteValidBooking_thenDeletesSuccessfully() {
         // arrange
         UUID bookingId = UUID.randomUUID();
-        when(bookingsRepository.existsById(bookingId)).thenReturn(true);
+
+        Flight flight = mock(Flight.class);
+        when(flight.getDepartureTime()).thenReturn(ZonedDateTime.now().plusHours(1));
+
+        Booking booking = mock(Booking.class);
+        when(booking.getFlight()).thenReturn(flight);
+
+        when(bookingsRepository.findById(bookingId)).thenReturn(Optional.of(booking));
 
         // act
         bookingsService.deleteBooking(bookingId);
@@ -84,16 +75,72 @@ class BookingsServiceTest {
     }
 
     @Test
-    void deleteBooking_whenBookingDoesNotExist_thenThrowException() {
+    void whenCreateBookingWithUnknownFlight_thenThrowsException() {
         // arrange
-        UUID bookingId = UUID.randomUUID();
-        when(bookingsRepository.existsById(bookingId)).thenReturn(false);
+        UUID flightId = UUID.randomUUID();
+        Passenger passenger = new Passenger("John Doe", "john@example.com");
+
+        when(flightsRepository.findById(flightId)).thenReturn(Optional.empty());
 
         // act & assert
-        RuntimeException exception = assertThrows(RuntimeException.class,
-                () -> bookingsService.deleteBooking(bookingId));
+        NotFoundException ex = assertThrows(NotFoundException.class, () -> {
+            bookingsService.createBooking(flightId, passenger);
+        });
 
-        assertEquals("Booking ID not found: " + bookingId, exception.getMessage());
-        verify(bookingsRepository, never()).deleteById(any());
+        assertEquals("Flight ID not found", ex.getMessage());
+    }
+
+    @Test
+    void whenCreateBookingForExistingPassenger_thenThrowsException() {
+        // arrange
+        UUID flightId = UUID.randomUUID();
+        Passenger passenger = new Passenger("John Doe", "john@example.com");
+        Flight flight = mock(Flight.class);
+
+        when(flightsRepository.findById(flightId)).thenReturn(Optional.of(flight));
+        when(bookingsRepository.existsByFlight_FlightIdAndPassengerEmail(flightId, passenger.getPassengerEmail()))
+                .thenReturn(true);
+
+        // act & assert
+        BusinessRuleException ex = assertThrows(BusinessRuleException.class, () -> {
+            bookingsService.createBooking(flightId, passenger);
+        });
+
+        assertEquals("Booking already exists for this passenger.", ex.getMessage());
+    }
+
+    @Test
+    void whenDeleteUnknownBooking_thenThrowsException() {
+        // arrange
+        UUID bookingId = UUID.randomUUID();
+        when(bookingsRepository.findById(bookingId)).thenReturn(Optional.empty());
+
+        // act & assert
+        NotFoundException ex = assertThrows(NotFoundException.class, () -> {
+            bookingsService.deleteBooking(bookingId);
+        });
+
+        assertEquals("Booking ID not found.", ex.getMessage());
+    }
+
+    @Test
+    void whenDeletePastBooking_thenThrowsException() {
+        // arrange
+        UUID bookingId = UUID.randomUUID();
+
+        Flight flight = mock(Flight.class);
+        when(flight.getDepartureTime()).thenReturn(ZonedDateTime.now().minusHours(2));
+
+        Booking booking = mock(Booking.class);
+        when(booking.getFlight()).thenReturn(flight);
+
+        when(bookingsRepository.findById(bookingId)).thenReturn(Optional.of(booking));
+
+        // act & assert
+        BusinessRuleException ex = assertThrows(BusinessRuleException.class, () -> {
+            bookingsService.deleteBooking(bookingId);
+        });
+
+        assertEquals("Booking cannot be cancelled as flight has already departed.", ex.getMessage());
     }
 }

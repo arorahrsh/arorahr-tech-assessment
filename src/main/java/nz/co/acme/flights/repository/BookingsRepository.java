@@ -8,4 +8,5 @@ import java.util.UUID;
 
 @Repository
 public interface BookingsRepository extends JpaRepository<Booking, UUID> {
+    boolean existsByFlight_FlightIdAndPassengerEmail(UUID flightId, String passengerEmail);
 }
