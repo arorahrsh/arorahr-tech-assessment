@@ -18,6 +18,8 @@ import java.util.List;
 @RequestMapping("/v1/flights")
 public class FlightsController {
 
+    private static final String DATE_FORMAT = "dd/MM/yyyy";
+
     private final FlightsService flightsService;
 
     private final Logger logger;
@@ -29,7 +31,7 @@ public class FlightsController {
         logger.info("Received POST /v1/flights with search request: {}", gson.toJson(request));
 
         List<Flight> result = flightsService.getFlights(request.getOrigin(), request.getDestination(),
-                LocalDate.parse(request.getDate(), DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+                LocalDate.parse(request.getDate(), DateTimeFormatter.ofPattern(DATE_FORMAT)));
 
         logger.info("Found {} flights matching search request", result.size());
         logger.info("Returning 200 HTTP status code and JSON response payload: {}", gson.toJson(result));
