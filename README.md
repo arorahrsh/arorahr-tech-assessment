@@ -26,7 +26,7 @@ cd arorahr-tech-assessment
 ./gradlew build
 ```
 
-3. Once the project dependencies are installed, run the application using the command below which will deploy the app on: `http://localhost:8080/`
+3. Run the application using the command below which will deploy the app on: `http://localhost:8080/`
 
 ```
 ./gradlew bootRun
@@ -35,5 +35,31 @@ cd arorahr-tech-assessment
 4. Use CURL or a REST Client (e.g. Postman) to call this flights service API
 
 ```
-curl -H "Content-Type: application/json" -d '{"origin":"AKL","destination":"WLG","travelDate":"2025-08-15"}' -X POST http://localhost:8080/v1/flights 
+curl -X POST http://localhost:8080/v1/flights -H "Content-Type: application/json" -d '{"origin":"AKL","destination":"WLG","date":"2025-08-15"}'
 ```
+
+### Sample logs
+
+```
+
+```
+
+## High level architecture
+
+This project is designed as a REST API that contains three endpoints. These allow the client to request available flights, create and delete flight bookings. The application also contains 2 in-memory databases to store flights and bookings data.
+
+![design](./images/02-design.png)
+
+## API Specification
+
+The project contains an Open API specification for this service which was drafted prior to development. This can be viewed on the [Swagger editor](https://editor.swagger.io/). Alternatively, a shortened version of this specification is shown below. For the raw specification, please refer to the [api-spec.yaml](./api-spec.yaml) file in the root directory.
+
+![spec](./images/01-api-specification.png)
+
+## Design considerations
+
+TODO
+
+## Assumptions
+
+TODO
