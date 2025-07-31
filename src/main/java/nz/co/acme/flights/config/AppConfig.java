@@ -25,7 +25,9 @@ public class AppConfig {
     @Scope("prototype")
     public Gson gson() {
         GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.registerTypeAdapter(ZonedDateTime.class, new ZonedDateTimeAdapter());
+        gsonBuilder
+                .disableHtmlEscaping()
+                .registerTypeAdapter(ZonedDateTime.class, new ZonedDateTimeAdapter());
         return gsonBuilder.create();
     }
 }

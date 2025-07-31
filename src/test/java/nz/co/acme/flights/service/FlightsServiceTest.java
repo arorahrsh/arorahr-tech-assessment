@@ -100,7 +100,7 @@ class FlightsServiceTest {
 
         // act & assert
         BusinessRuleException ex = assertThrows(BusinessRuleException.class, () -> flightsService.getFlights(request));
-        assertEquals("Origin and destination city cannot be the same.", ex.getMessage());
+        assertEquals("Origin and destination city cannot be the same", ex.getMessage());
     }
 
     @Test
@@ -111,7 +111,7 @@ class FlightsServiceTest {
 
         // act & assert
         BusinessRuleException ex = assertThrows(BusinessRuleException.class, () -> flightsService.getFlights(request));
-        assertEquals("Travel date cannot be in the past.", ex.getMessage());
+        assertEquals("Travel date cannot be in the past", ex.getMessage());
     }
 
     @Test
@@ -121,7 +121,7 @@ class FlightsServiceTest {
 
         // act & assert
         BusinessRuleException ex = assertThrows(BusinessRuleException.class, () -> flightsService.getFlights(request));
-        assertEquals("Travel date must be provided in DD/MM/YYYY format.", ex.getMessage());
+        assertEquals("Travel date must be provided in DD/MM/YYYY format", ex.getMessage());
     }
 
     private Flight mockFlight(String flightCode, String departureTime) {

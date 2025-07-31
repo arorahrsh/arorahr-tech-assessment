@@ -7,12 +7,14 @@ import nz.co.acme.flights.model.Flight;
 import nz.co.acme.flights.model.FlightRequest;
 import nz.co.acme.flights.service.FlightsService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 
 import java.util.List;
 
 @AllArgsConstructor
+@Validated
 @RestController
 @RequestMapping("/v1/flights")
 public class FlightsController {

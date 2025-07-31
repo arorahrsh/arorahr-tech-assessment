@@ -27,7 +27,7 @@ public class BookingsService {
                 .orElseThrow(() -> new NotFoundException("Flight ID not found"));
 
         if (bookingsRepository.existsByFlight_FlightIdAndPassengerEmail(flightId, passenger.getPassengerEmail())) {
-            throw new BusinessRuleException("Booking already exists for this passenger.");
+            throw new BusinessRuleException("Booking already exists for this passenger");
         }
 
         Booking booking = new Booking(
@@ -43,10 +43,10 @@ public class BookingsService {
 
     public void deleteBooking(UUID bookingId) {
         Booking booking = bookingsRepository.findById(bookingId)
-                .orElseThrow(() -> new NotFoundException("Booking ID not found."));
+                .orElseThrow(() -> new NotFoundException("Booking ID not found"));
 
         if (booking.getFlight().getDepartureTime().isBefore(ZonedDateTime.now())) {
-            throw new BusinessRuleException("Booking cannot be cancelled as flight has already departed.");
+            throw new BusinessRuleException("Booking cannot be cancelled as flight has already departed");
         }
 
         bookingsRepository.deleteById(bookingId);

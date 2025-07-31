@@ -3,10 +3,10 @@ package nz.co.acme.flights.model;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 
 @AllArgsConstructor
-@Getter
+@Data
 public class FlightRequest {
     @NotNull
     private AirportCode origin;

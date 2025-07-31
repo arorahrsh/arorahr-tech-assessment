@@ -3,11 +3,11 @@ package nz.co.acme.flights.model;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
+import lombok.Data;
 
 import java.util.UUID;
 
-@Getter
+@Data
 public class BookingRequest {
     @NotNull
     private UUID flightId;
@@ -16,5 +16,6 @@ public class BookingRequest {
     private String passengerName;
 
     @Email
+    @NotBlank
     private String passengerEmail;
 }

@@ -4,19 +4,18 @@ import com.google.gson.Gson;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
-import nz.co.acme.flights.model.Booking;
-import nz.co.acme.flights.model.BookingRequest;
-import nz.co.acme.flights.model.BookingResponse;
-import nz.co.acme.flights.model.Passenger;
+import nz.co.acme.flights.model.*;
 import nz.co.acme.flights.service.BookingsService;
 import org.slf4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
 @AllArgsConstructor
+@Validated
 @RestController
 @RequestMapping("/v1/bookings")
 public class BookingsController {
@@ -28,7 +27,7 @@ public class BookingsController {
     private final Gson gson;
 
     @PostMapping
-    public ResponseEntity<BookingResponse> getFlights(@Valid @RequestBody BookingRequest request) {
+    public ResponseEntity<BookingResponse> createBooking(@Valid @RequestBody BookingRequest request) {
         logger.info("Received POST /v1/bookings with request: {}", gson.toJson(request));
 
         Booking booking = bookingsService.createBooking(request.getFlightId(), Passenger.from(request));
@@ -41,10 +40,10 @@ public class BookingsController {
     }
 
     @DeleteMapping("/{bookingId}")
-    public ResponseEntity<Void> deleteBooking(@NotNull @PathVariable UUID bookingId) {
+    public ResponseEntity<Void> deleteBooking(@NotNull @PathVariable String bookingId) {
         logger.info("Received DELETE /v1/bookings/{}", bookingId);
 
-        bookingsService.deleteBooking(bookingId);
+        bookingsService.deleteBooking(UUID.fromString(bookingId));
         logger.info("Deleted booking with ID {}, returning 204 HTTP status code", bookingId);
 
         return ResponseEntity.noContent().build();

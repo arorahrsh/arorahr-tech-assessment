@@ -106,7 +106,7 @@ class BookingsServiceTest {
             bookingsService.createBooking(flightId, passenger);
         });
 
-        assertEquals("Booking already exists for this passenger.", ex.getMessage());
+        assertEquals("Booking already exists for this passenger", ex.getMessage());
     }
 
     @Test
@@ -120,7 +120,7 @@ class BookingsServiceTest {
             bookingsService.deleteBooking(bookingId);
         });
 
-        assertEquals("Booking ID not found.", ex.getMessage());
+        assertEquals("Booking ID not found", ex.getMessage());
     }
 
     @Test
@@ -141,6 +141,6 @@ class BookingsServiceTest {
             bookingsService.deleteBooking(bookingId);
         });
 
-        assertEquals("Booking cannot be cancelled as flight has already departed.", ex.getMessage());
+        assertEquals("Booking cannot be cancelled as flight has already departed", ex.getMessage());
     }
 }
