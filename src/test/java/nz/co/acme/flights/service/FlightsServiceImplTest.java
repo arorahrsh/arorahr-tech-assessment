@@ -17,7 +17,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class FlightsServiceTest {
+class FlightsServiceImplTest {
 
     private FlightsRepository flightsRepository;
 
@@ -26,7 +26,7 @@ class FlightsServiceTest {
     @BeforeEach
     void setUp() {
         flightsRepository = mock(FlightsRepository.class);
-        flightsService = new FlightsService(flightsRepository);
+        flightsService = new FlightsServiceImpl(flightsRepository);
     }
 
     @Test

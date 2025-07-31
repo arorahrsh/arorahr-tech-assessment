@@ -17,7 +17,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class BookingsServiceTest {
+class BookingsServiceImplTest {
 
     private FlightsRepository flightsRepository;
 
@@ -29,7 +29,7 @@ class BookingsServiceTest {
     void setUp() {
         flightsRepository = mock(FlightsRepository.class);
         bookingsRepository = mock(BookingsRepository.class);
-        bookingsService = new BookingsService(flightsRepository, bookingsRepository);
+        bookingsService = new BookingsServiceImpl(flightsRepository, bookingsRepository);
     }
 
     @Test

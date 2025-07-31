@@ -30,11 +30,9 @@ public class FlightsController {
         logger.info("Received POST /v1/flights with search request: {}", gson.toJson(request));
 
         List<Flight> result = flightsService.getFlights(request);
-
         logger.info("Found {} flights matching search request", result.size());
 
         logger.info("Returning 200 HTTP status code and JSON response: {}", gson.toJson(result));
-
         return ResponseEntity.ok(result);
     }
 }
