@@ -96,7 +96,7 @@ class FlightsServiceImplTest {
     @Test
     void whenOriginEqualsDestination_thenThrowsException() {
         // arrange
-        FlightRequest request = new FlightRequest(AirportCode.AKL, AirportCode.AKL, "01/08/2025");
+        FlightRequest request = new FlightRequest(AirportCode.AKL, AirportCode.AKL, "01/09/2026");
 
         // act & assert
         BusinessRuleException ex = assertThrows(BusinessRuleException.class, () -> flightsService.getFlights(request));

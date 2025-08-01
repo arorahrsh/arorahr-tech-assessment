@@ -17,10 +17,25 @@ configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
 	}
+	integrationTestImplementation {
+		extendsFrom testImplementation
+	}
+	integrationTestRuntimeOnly {
+		extendsFrom testRuntimeOnly
+	}
 }
 
 repositories {
 	mavenCentral()
+}
+
+sourceSets {
+	integrationTest {
+		java.srcDir file("src/integrationTest/java")
+		resources.srcDir file("src/integrationTest/resources")
+		runtimeClasspath += sourceSets.main.runtimeClasspath + sourceSets.test.runtimeClasspath
+		compileClasspath += sourceSets.main.compileClasspath + sourceSets.test.compileClasspath
+	}
 }
 
 dependencies {
@@ -32,9 +47,20 @@ dependencies {
 	runtimeOnly 'com.h2database:h2'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	integrationTestImplementation 'io.github.hakky54:logcaptor:2.9.3'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+tasks.register('integrationTest', Test) {
+	group = 'verification'
+	testClassesDirs = sourceSets.integrationTest.output.classesDirs
+	classpath = sourceSets.integrationTest.runtimeClasspath
+	shouldRunAfter tasks.test
+	useJUnitPlatform()
+}
+
+check.dependsOn integrationTest

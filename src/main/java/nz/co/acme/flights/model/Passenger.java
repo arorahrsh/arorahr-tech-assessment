@@ -3,8 +3,6 @@ package nz.co.acme.flights.model;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.util.UUID;
-
 @AllArgsConstructor
 @Getter
 public class Passenger {
